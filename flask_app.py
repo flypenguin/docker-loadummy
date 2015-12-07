@@ -1,5 +1,5 @@
 from flask import Flask
-import flask, picompute, time, os, socket, uuid
+import flask, picompute, time, os, socket, uuid, datetime
 from jinja2 import escape
 import datetime as dt
 
@@ -32,6 +32,13 @@ def hello_world():
     color = "green" if threaded else "red"
     enabled = "ENABLED" if threaded else "disabled"
     rv = """
+<style type="text/css">
+td {{
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-right: 0.6em;
+}}
+</style>
 <table>
     <tr>
         <td>hostname</td>
@@ -46,7 +53,11 @@ def hello_world():
         <td>{}</td>
     </tr>
     <tr>
-        <td>multi threading</td>
+        <td>multi tdreading</td>
+        <td>{}</td>
+    </tr>
+    <tr>
+        <td>timestamp</td>
         <td>{}</td>
     </tr>
     <tr>
@@ -59,7 +70,10 @@ def hello_world():
         _get_host_ip(),
         uuid_str,
         "<span style=\"color:%s\">%s</span>"%(color, enabled),
-        str(flask.escape("/pi/<digits>, /env, /env/<variable_start_string>"))
+        str(flask.escape(datetime.datetime.now())),
+        str(str(flask.escape("/pi/<digits>"))+"<br/>"+
+            str(flask.escape("/env"))+"<br/>"+
+            str(flask.escape("/env/<variable_start_string>")))
     )
     return rv
 
