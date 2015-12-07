@@ -1,5 +1,5 @@
 from flask import Flask
-import flask, picompute, time, os
+import flask, picompute, time, os, socket
 from jinja2 import escape
 import datetime as dt
 
@@ -18,17 +18,43 @@ def _get_env_vars(var_start=''):
         render += unicode(addme) + "<br>"
     return render
 
+def _get_host_ip():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('google.com', 0))
+    return s.getsockname()[0]
+
 
 @app.route('/')
 def hello_world():
     global threaded
     color = "green" if threaded else "red"
     enabled = "ENABLED" if threaded else "disabled"
-    rv = "<p>" + \
-        str(flask.escape("endpoints: /pi/<digits>, /env, /env/<variable_start_string>")) + \
-        "</p><p>" + \
-        "flask multi threading is <span style=\"color:%s\">%s</span>"%(color, enabled) + \
-        "</p>"
+    rv = """
+<table>
+    <tr>
+        <td>hostname</td>
+        <td>{}</td>
+    </tr>
+    <tr>
+        <td>ip address</td>
+        <td>{}</td>
+    </tr>
+    <tr>
+        <td>multi threading</td>
+        <td>{}</td>
+    </tr>
+    <tr>
+        <td>available endpoints</td>
+        <td>{}</td>
+    </tr>
+</table>
+""".format(
+        socket.gethostname(),
+        _get_host_ip(),
+        "<span style=\"color:%s\">%s</span>"%(color, enabled),
+        str(flask.escape("/pi/<digits>, /env, /env/<variable_start_string>"))
+    )
     return rv
 
 @app.route('/pi/<digits>')
@@ -57,5 +83,4 @@ if __name__ == '__main__':
         threaded = True
     else:
         threaded = False
-    print "Threaded", threaded
     app.run(host='0.0.0.0', threaded=threaded)
