@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.debug = True
 threaded = None
 uuid_str = None
+loadummy_name = ""
 
 def _get_env_vars(var_start=''):
     render = unicode("")
@@ -61,6 +62,10 @@ td {{
         <td>{}</td>
     </tr>
     <tr>
+        <td>configured name</td>
+        <td>{}</td>
+    </tr>
+    <tr>
         <td>available endpoints</td>
         <td>{}</td>
     </tr>
@@ -71,6 +76,7 @@ td {{
         uuid_str,
         "<span style=\"color:%s\">%s</span>"%(color, enabled),
         str(flask.escape(datetime.datetime.now())),
+        str(flask.escape(loadummy_name)),
         str(str(flask.escape("/pi/<digits>"))+"<br/>"+
             str(flask.escape("/env"))+"<br/>"+
             str(flask.escape("/env/<variable_start_string>")))
@@ -100,6 +106,9 @@ def selected_env(start):
 if __name__ == '__main__':
     uuid_str = uuid.uuid4()
     threaded = os.environ.get('FLASK_THREADED')
+    loadummy_name = os.environ.get("LOADUMMY_NAME")
+    loadummy_name = loadummy_name if loadummy_name else "no name configured"
+
     if threaded and threaded.lower() in ("1", "true", "on"):
         threaded = True
     else:
