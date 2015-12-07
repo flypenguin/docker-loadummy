@@ -1,11 +1,12 @@
 from flask import Flask
-import flask, picompute, time, os, socket
+import flask, picompute, time, os, socket, uuid
 from jinja2 import escape
 import datetime as dt
 
 app = Flask(__name__)
 app.debug = True
 threaded = None
+uuid_str = None
 
 def _get_env_vars(var_start=''):
     render = unicode("")
@@ -41,6 +42,10 @@ def hello_world():
         <td>{}</td>
     </tr>
     <tr>
+        <td>random uuid</td>
+        <td>{}</td>
+    </tr>
+    <tr>
         <td>multi threading</td>
         <td>{}</td>
     </tr>
@@ -52,6 +57,7 @@ def hello_world():
 """.format(
         socket.gethostname(),
         _get_host_ip(),
+        uuid_str,
         "<span style=\"color:%s\">%s</span>"%(color, enabled),
         str(flask.escape("/pi/<digits>, /env, /env/<variable_start_string>"))
     )
@@ -78,6 +84,7 @@ def selected_env(start):
 
 
 if __name__ == '__main__':
+    uuid_str = uuid.uuid4()
     threaded = os.environ.get('FLASK_THREADED')
     if threaded and threaded.lower() in ("1", "true", "on"):
         threaded = True
