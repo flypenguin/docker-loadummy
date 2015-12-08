@@ -44,7 +44,7 @@ def format_answer(req, obj):
             "</pre>"
     def format_yaml(obj):
         return yaml.dump(obj, default_flow_style=False)
-    accept = request.headers.get('Accept')
+    accept = request.headers.get('Accept', "")
     mimetype = 'text/html'
     if accept.find('yaml') != -1: mimetype = 'application/x-yaml'
     if accept.find('json') != -1: mimetype = 'application/json'
