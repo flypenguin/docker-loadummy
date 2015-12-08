@@ -38,21 +38,12 @@ def _get_host_ip():
     return s.getsockname()[0]
 
 
-def format_text(obj):
-    rv = ""
-    rv+="<table>"
-    for key in sorted(obj.keys()):
-        rv += """
-    <tr>
-        <td><pre>{}</pre></td>
-        <td><pre>{}</pre></td>
-    </tr>
-""".format(escape(key), escape(obj[key]))
-    rv+="</table>"
-    return rv
-
-
 def format_answer(req, obj):
+    def format_text(obj):
+        return \
+            "<pre>" + \
+            str(escape(yaml.safe_dump(obj, default_flow_style=False))) + \
+            "</pre>"
     def format_yaml(obj):
         return yaml.dump(obj, default_flow_style=False)
     accept = request.headers.get('Accept')
