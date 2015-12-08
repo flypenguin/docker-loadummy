@@ -1,7 +1,7 @@
 from flask import Flask, request, make_response
 from requests_toolbelt.threaded import pool
 from jinja2 import escape
-import requests, flask, picompute, time, os, socket, uuid, datetime, yaml, random, json
+import requests, flask, picompute, time, os, socket, uuid, datetime, yaml, random, json, threading
 import datetime as dt
 from pprint import pprint
 
@@ -104,6 +104,16 @@ def selected_env(start):
 # <size> plus minus <spread>
 @app.route('/distrib/<num>/<size>')
 def distribute(num, size):
+    def _call(number, url, responseset):
+        try:
+            r = requests.get(url, headers={'Accept':'json'})
+            res = r.json()
+            res['url'] = url
+            res['status_code'] = r.status_code
+        except Exception as e:
+            print(e)
+            res = { 'url': url, 'status_code': '-1' }
+        responseset[number] = res
     size   = int(size)
     spread = int(size / 10)
     lower  = int(size - spread/2)
@@ -112,16 +122,18 @@ def distribute(num, size):
         loadummy_next+"/pi/{}".format(x) for x in
             [random.randint(lower, upper) for x in range(int(num))]
     ]
-    # call it using requests_toolbelt
-    p = pool.Pool.from_urls(urls)
-    p.join_all()
-    answers = sorted([
-        { 'url': response.request_kwargs['url'],
-          'status' : response.status_code }
-        for response in p.responses()
-    ], key=lambda x: x['url'])
-    retval = { 'answers': answers }
-    return format_answer(request, retval)
+    threads     = []
+    i           = 0
+    responseset = {}
+    for url in urls:
+        t=threading.Thread(name=str(i), target=_call, args=(i,url,responseset))
+        threads.append(t)
+        t.start()
+        i += 1
+    for thread in threads:
+        thread.join()
+
+    return format_answer(request, responseset)
 
 
 if __name__ == '__main__':
