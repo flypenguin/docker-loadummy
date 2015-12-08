@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 from requests_toolbelt.threaded import pool
 from jinja2 import escape
 import requests, flask, picompute, time, os, socket, uuid, datetime, yaml, random, json
@@ -56,15 +56,17 @@ def format_answer(req, obj):
     def format_yaml(obj):
         return yaml.dump(obj, default_flow_style=False)
     accept = request.headers.get('Accept')
-    mimetype = 'text'
-    if accept.find('yaml') != -1: mimetype = 'yaml'
-    if accept.find('json') != -1: mimetype = 'json'
+    mimetype = 'text/html'
+    if accept.find('yaml') != -1: mimetype = 'application/x-yaml'
+    if accept.find('json') != -1: mimetype = 'application/json'
     handlers = {
-        'yaml' : format_yaml,
-        'json' : json.dumps,
-        'text' : format_text
+        'application/x-yaml' : format_yaml,
+        'application/json'   : json.dumps,
+        'text/html'          : format_text
     }
-    return handlers[mimetype](obj), 200
+    rsp = make_response(handlers[mimetype](obj))
+    rsp.headers['Content-type'] = mimetype
+    return rsp
 
 
 @app.route('/')
