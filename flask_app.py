@@ -1,9 +1,7 @@
-from flask import Flask, request, make_response
-from requests_toolbelt.threaded import pool
+from flask import Flask, request, make_response, render_template
 from jinja2 import escape
-import requests, flask, picompute, time, os, socket, uuid, datetime, yaml, random, json, threading
+import requests, picompute, time, os, socket, uuid, datetime, yaml, random, json, threading, subprocess
 import datetime as dt
-from pprint import pprint
 
 app = Flask(__name__)
 
@@ -93,6 +91,21 @@ def compute_digits(digits):
 @app.route('/env')
 def full_env():
     return format_answer(request, _get_env_vars())
+
+
+@app.route('/exec', methods=['GET'])
+def exec_form():
+    return render_template("exec.html"), 200
+
+
+@app.route('/exec', methods=['POST'])
+def exec_exec():
+    cmd = request.form['command']
+    result = subprocess.check_output(
+            cmd + " ; exit 0",
+            stderr=subprocess.STDOUT,
+            shell=True).decode('utf-8')
+    return render_template("pre.html", command=cmd, result=result), 200
 
 
 @app.route('/env/<start>')
