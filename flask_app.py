@@ -121,7 +121,6 @@ def distribute(num, size):
         loadummy_next+"/pi/{}".format(x) for x in
             [random.randint(lower, upper) for x in range(int(num))]
     ]
-    pprint(list(urls))
     # call it using requests_toolbelt
     p = pool.Pool.from_urls(urls)
     p.join_all()
