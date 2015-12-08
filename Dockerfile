@@ -1,4 +1,4 @@
-FROM flypenguin/simple_flask
+FROM python:2-onbuild
 MAINTAINER Axel Bock <mr.axel.bock@gmail.com>
 
 EXPOSE 5000

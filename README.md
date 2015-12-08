@@ -11,12 +11,16 @@ to simulate CPU load to test autoscaling on the cloud provider.
 (of course flask has to be installed, so you should do it in a virtualenv)
 
 
-## Container environment variables
+## Environment variables
 
-To start flask multi-threaded (so that more than one request can be answered by one instance at the same time) just set the `FLASK_THREADED` environment variable to either "1", "on" or "true" (case does not matter).
+    FLASK_PORT=5000             # port flask listens on
+    FLASK_DEBUG=0               # whether flask is put in debug mode
+    FLASK_THREADED=1            # whether flask is being run multi-threaded
+
+    LOADUMMY_NEXT=http:/...     # optional, for the /distrib/... endpoint
 
 
-## Available endpoints
+## Endpoints
 
 
 ### `/pi/<digits>`
@@ -39,3 +43,24 @@ Displays all environment variables starting with `VAR_START_STR`
 
     localhost:5000/env/PATH
 
+
+### `/distrib/<num>/<avg>`
+
+To simulate a controller / worker type of structure you can use the `/distrib/<a>/<b>` endpoint. To use this endpoint variable `LOADUMMY_DISTRIB` must be set.
+
+    LOADUMMY_DISTRIB=https?://<next_host>[:<nextport>]
+
+If you call `http://host:port/distrib/5/250` now, what happens then is ...
+
+* it will create NUM requests for calculation of pi with
+* (on average) DIGITS digits.
+
+Or better: if you call it with `/5/250`, it might query those urls:
+
+* `http://next_host:nextport/pi/267` (1st request)
+* `http://next_host:nextport/pi/229` (2nd request)
+* `http://next_host:nextport/pi/244` (...)
+* `http://next_host:nextport/pi/231`
+* `http://next_host:nextport/pi/276` (5th request)
+
+... where the numbers are made up randomly around the 250 digits marker (plus minus 10%).
