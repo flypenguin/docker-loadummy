@@ -125,7 +125,7 @@ def distribute(num, size):
 
 
 if __name__ == '__main__':
-    uuid_str = uuid.uuid4()
+    uuid_str       = str(uuid.uuid4())
 
     loadummy_next  = os.environ.get("LOADUMMY_NEXT", False)
 
