@@ -1,7 +1,6 @@
 # docker-loadummy
 
-A super little Flask app which computes pi to the nth number
-to simulate CPU load to test autoscaling on the cloud provider.
+A simple little Flask app which computes pi to the nth number to simulate CPU load to test autoscaling on the cloud provider.
 
 
 ## Testing the flask app locally
@@ -18,6 +17,11 @@ to simulate CPU load to test autoscaling on the cloud provider.
     FLASK_THREADED=1            # whether flask is being run multi-threaded
 
     LOADUMMY_NEXT=http:/...     # optional, for the /distrib/... endpoint
+
+
+## Data encoding
+
+The app will return HTML data (`Content-type: text/html`), unless otherwise specified in the `Accept:` header. If it finds the string `yaml` in that header, YAML data is returned (`Content-type: application/x-yaml`, like rails), if it finds the string `json` it returns JSON data (`Content-type: application/json`).
 
 
 ## Endpoints
