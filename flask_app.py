@@ -89,11 +89,14 @@ def compute_digits(digits):
     pi           = picompute.pi(digits)
     duration     = time.time() - begin
 
+    digits_head  = request.headers.get('Pi-Digits', None)
+    pi_str       = str(pi) if not digits_head else str(pi)[-(int(digits_head)):]
+
     answer       = {
         'duration':  duration,
         'digits':    digits,
         'time':      str(dt.datetime.now()),
-        'pi':        str(pi)
+        'pi':        pi_str,
     }
 
     return format_answer(request, answer)
@@ -146,7 +149,7 @@ def debug_enable_disable(onoff):
 def distribute(num, size):
     def _call(number, url, responseset):
         try:
-            r = requests.get(url, headers={'Accept':'json'})
+            r = requests.get(url, headers={'Accept':'json', 'Pi-Digits': '10'})
             res = r.json()
             res['url'] = url
             res['status_code'] = r.status_code
