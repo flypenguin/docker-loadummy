@@ -124,6 +124,22 @@ def selected_env(start):
     return format_answer(request, _get_env_vars(start))
 
 
+@app.route('/request-headers')
+def return_headers():
+    return format_answer(request, dict(request.headers))
+
+
+@app.route('/debug/<onoff>')
+def debug_enable_disable(onoff):
+    if not onoff in ["1", "0"]:
+        return format_answer(request, {'error': 'use /debug/1 or /debug/0'})
+    onoff = int(onoff)
+    msg = ["disabled", "enabled"]
+    app.debug = bool(onoff)
+    app.logger.debug("You should only see this with debug enabled")
+    return format_answer(request, {'message': "debug was {}".format(msg[onoff])})
+
+
 # will create <num> calls to the backend, with a default digit count of
 # <size> plus minus <spread>
 @app.route('/distrib/<num>/<size>')
