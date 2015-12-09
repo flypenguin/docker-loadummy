@@ -89,11 +89,12 @@ def compute_digits(digits):
     pi           = picompute.pi(digits)
     duration     = time.time() - begin
 
-    answer              = {}
-    answer['duration']  = duration
-    answer['digits']    = digits
-    answer['time']      = str(dt.datetime.now())
-    answer['pi']        = str(pi)
+    answer       = {
+        'duration':  duration,
+        'digits':    digits,
+        'time':      str(dt.datetime.now()),
+        'pi':        str(pi)
+    }
 
     return format_answer(request, answer)
 
