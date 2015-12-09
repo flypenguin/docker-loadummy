@@ -160,7 +160,7 @@ def distribute(num, size):
     upper  = int(size + spread/2)
     urls   = [
         loadummy_next+"/pi/{}".format(x) for x in
-            [random.randint(lower, upper) for x in range(int(num))]
+            random.sample(range(lower, upper), int(num))
     ]
     threads     = []
     i           = 0
