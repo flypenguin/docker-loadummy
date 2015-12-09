@@ -168,6 +168,7 @@ def distribute(num, size):
     threads     = []
     i           = 0
     responseset = {}
+    begin       = time.time()
     for url in urls:
         t=threading.Thread(name=str(i), target=_call, args=(i,url,responseset))
         threads.append(t)
@@ -175,8 +176,9 @@ def distribute(num, size):
         i += 1
     for thread in threads:
         thread.join()
-
-    return format_answer(request, responseset)
+    duration    = time.time() - begin
+    retval = { 'duration': duration, 'responseset': responseset}
+    return format_answer(request, retval)
 
 
 if __name__ == '__main__':
