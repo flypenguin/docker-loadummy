@@ -56,12 +56,12 @@ def format_answer(req, obj, mimetype=None):
         app.logger.debug("Determined MIME type: {}".format(mimetype))
     else:
         app.logger.debug("Enforced MIME type: {}".format(mimetype))
-        rsp_data = handlers[mimetype](obj)
-        handlers = {
-            MIME_YAML : format_yaml,
-            MIME_HTML : format_text,
-            MIME_JSON : json.dumps,
-        }
+    handlers = {
+        MIME_YAML : format_yaml,
+        MIME_HTML : format_text,
+        MIME_JSON : json.dumps,
+    }
+    rsp_data = handlers[mimetype](obj)
     app.logger.debug("Returned data:\n{}".format(rsp_data))
     rsp = make_response(handlers[mimetype](obj))
     rsp.headers['Content-type'] = mimetype
