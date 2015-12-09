@@ -152,7 +152,7 @@ def distribute(num, size):
             res['status_code'] = r.status_code
         except Exception as e:
             print(e)
-            res = { 'url': url, 'status_code': '-1' }
+            res = {'url': url, 'status_code': '-1', 'error': str(e)}
         responseset[number] = res
     size   = int(size)
     spread = int(size / 10)
