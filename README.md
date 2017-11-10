@@ -27,6 +27,11 @@ The app will return HTML data (`Content-type: text/html`), unless otherwise spec
 ## Endpoints
 
 
+### `/health`
+
+Returns "OK" with a HTTP status code of 200.
+
+
 ### `/pi/<digits>`
 
 Computes the number pi with the number of digits given. So ...

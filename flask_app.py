@@ -81,6 +81,11 @@ def hello_world():
     return format_answer(request, rv)
 
 
+@app.route('/health')
+def health():
+    return "OK", 200
+
+
 @app.route('/pi/<digits>')
 def compute_digits(digits):
     digits       = int(digits)
