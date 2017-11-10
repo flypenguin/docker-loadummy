@@ -2,3 +2,4 @@ flask
 requests
 requests-toolbelt
 PyYAML
+netifaces

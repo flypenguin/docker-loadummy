@@ -2,6 +2,7 @@ from flask import Flask, request, make_response, render_template
 from jinja2 import escape
 import requests, picompute, time, os, socket, uuid, datetime, yaml, random, json, threading, subprocess
 import datetime as dt
+from netifaces import interfaces, ifaddresses
 
 app = Flask(__name__)
 
@@ -31,13 +32,6 @@ def _get_env_vars(var_start=''):
         # convenience object which auto-escapes everything you add to it ...
         render += unicode(addme) + "<br>"
     return render
-
-
-def _get_host_ip():
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('google.com', 0))
-    return s.getsockname()[0]
 
 
 def format_answer(req, obj, mimetype=None):
@@ -72,11 +66,13 @@ def format_answer(req, obj, mimetype=None):
 def hello_world():
     rv = {}
     rv['hostname']             = socket.gethostname()
-    rv['ip']                   = _get_host_ip()
     rv['random_uuid']          = uuid_str
     rv['timestamp']            = datetime.datetime.now()
     rv['set_flask_threaded']   = flask_threaded
     rv['set_loadummy_name']    = loadummy_name
+    rv['ips']                  = {
+        iface: ifaddresses(iface)[2][0]["addr"] for iface in interfaces()
+    }
 
     return format_answer(request, rv)
 
