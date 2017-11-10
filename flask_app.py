@@ -17,6 +17,7 @@ flask_port      = None
 loadummy_next   = None
 loadummy_name   = None
 
+MIME_TEXT = 'text/plain'
 MIME_HTML = 'text/html'
 MIME_YAML = 'application/x-yaml'
 MIME_JSON = 'application/json'
@@ -36,6 +37,8 @@ def _get_env_vars(var_start=''):
 
 def format_answer(req, obj, mimetype=None):
     def format_text(obj):
+        return yaml.safe_dump(obj, default_flow_style=False)
+    def format_html(obj):
         return \
             "<pre>" + \
             str(escape(yaml.safe_dump(obj, default_flow_style=False))) + \
@@ -44,15 +47,17 @@ def format_answer(req, obj, mimetype=None):
         return yaml.dump(obj, default_flow_style=False)
     if not mimetype:
         accept = request.headers.get('Accept', "")
-        mimetype = MIME_HTML
-        if accept.find('yaml') != -1: mimetype = MIME_YAML
-        if accept.find('json') != -1: mimetype = MIME_JSON
+        mimetype = MIME_TEXT
+        if accept == '*/*': mimetype = MIME_TEXT
+        elif accept.find('yaml') != -1: mimetype = MIME_YAML
+        elif accept.find('json') != -1: mimetype = MIME_JSON
         app.logger.debug("Determined MIME type: {}".format(mimetype))
     else:
         app.logger.debug("Enforced MIME type: {}".format(mimetype))
     handlers = {
+        MIME_TEXT : format_text,
         MIME_YAML : format_yaml,
-        MIME_HTML : format_text,
+        MIME_HTML : format_html,
         MIME_JSON : json.dumps,
     }
     rsp_data = handlers[mimetype](obj)
