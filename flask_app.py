@@ -189,17 +189,12 @@ def distribute(num, size):
 
 if __name__ == '__main__':
     uuid_str       = str(uuid.uuid4())
-
     loadummy_next  = os.environ.get("LOADUMMY_NEXT", False)
-
     loadummy_name  = os.environ.get("LOADUMMY_NAME", '')
-
     flask_threaded = os.environ.get('FLASK_THREADED', flask_threaded_default)
     flask_threaded = True if flask_threaded.lower() in ("1", "true", "on") else False
-
     flask_debug    = os.environ.get('FLASK_DEBUG', flask_debug_default)
     flask_debug    = True if flask_debug.lower() in ("1", "true", "on") else False
-
     flask_port     = int(os.environ.get('FLASK_PORT', flask_port_default))
 
     app.run(
