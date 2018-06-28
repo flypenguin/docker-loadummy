@@ -67,6 +67,15 @@ def format_answer(req, obj, mimetype=None):
     return rsp
 
 
+def _get_interface_ips():
+    try:
+        # this is just fucking broken. investigate, otherwise it's disabled now.
+        return {
+            iface: ifaddresses(iface)[2][0]["addr"] for iface in interfaces()
+        }
+    except KeyError as e:
+        return {'error': str(e)}
+
 @app.route('/')
 def hello_world():
     rv = {}
@@ -75,9 +84,7 @@ def hello_world():
     rv['timestamp']            = datetime.datetime.now()
     rv['set_flask_threaded']   = flask_threaded
     rv['set_loadummy_name']    = loadummy_name
-    rv['ips']                  = {
-        iface: ifaddresses(iface)[2][0]["addr"] for iface in interfaces()
-    }
+#    rv['ips']                  = _get_interface_ips()
 
     return format_answer(request, rv)
 
