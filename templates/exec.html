@@ -2,7 +2,9 @@
 {% block body %}
 <p>Enter command to execute:</p>
 <form action="/exec" method="POST">
-    <input type="text" name="command">
+    <input type="text" name="command"><br clear="all">
     <input type="submit" name="command-form" value="Send">
+    <a href="/">Back to main page</a>
 </form>
+
 {% endblock %}
