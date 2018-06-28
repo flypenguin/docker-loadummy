@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, render_template
+from flask import Flask, request, make_response, render_template, redirect
 from jinja2 import escape
 import requests, picompute, time, os, socket, uuid, datetime, yaml, random, json, threading, subprocess
 import datetime as dt
@@ -147,6 +147,18 @@ def debug_enable_disable(onoff):
     app.debug = bool(onoff)
     app.logger.debug("You should only see this with debug enabled")
     return format_answer(request, {'message': "debug was {}".format(msg[onoff])})
+
+
+@app.route('/print', methods=["GET"])
+def print_get():
+    return render_template("print.html"), 200
+
+
+@app.route('/print', methods=["POST"])
+def print_post():
+    print_text = request.form['print']
+    print(print_text)
+    return redirect("/print")
 
 
 # will create <num> calls to the backend, with a default digit count of

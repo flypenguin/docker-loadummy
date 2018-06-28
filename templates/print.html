@@ -1,0 +1,9 @@
+{% extends 'webpage.html' %}
+{% block body %}
+<p>Enter text to print on stdout:</p>
+<form action="/print" method="POST">
+    <textarea type="text" name="print" cols="120" rows="7"></textarea><br clear="all">
+    <input type="submit" name="print-form" value="Send"/><br>
+    <a href="/">Back to main page</a>
+</form>
+{% endblock %}
