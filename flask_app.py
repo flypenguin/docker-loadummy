@@ -177,7 +177,7 @@ def print_get():
 @app.route('/print', methods=["POST"])
 def print_post():
     print_text = request.form['print']
-    print(print_text, file=sys.stdout)
+    print(print_text, file=sys.stderr)
     return redirect("/print")
 
 
