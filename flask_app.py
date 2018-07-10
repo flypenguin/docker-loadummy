@@ -1,8 +1,21 @@
-from flask import Flask, request, make_response, render_template, redirect
-from jinja2 import escape
-import requests, picompute, time, os, socket, uuid, datetime, yaml, random, json, threading, subprocess
 import datetime as dt
-from netifaces import interfaces, ifaddresses
+import json
+import os
+import random
+import socket
+import subprocess
+import sys
+import threading
+import time
+import uuid
+
+import requests
+import yaml
+
+import picompute
+from flask import Flask, make_response, redirect, render_template, request
+from jinja2 import escape
+from netifaces import ifaddresses, interfaces
 
 app = Flask(__name__)
 
@@ -164,7 +177,7 @@ def print_get():
 @app.route('/print', methods=["POST"])
 def print_post():
     print_text = request.form['print']
-    print(print_text)
+    print(print_text, file=sys.stdout)
     return redirect("/print")
 
 
