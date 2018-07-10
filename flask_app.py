@@ -94,7 +94,7 @@ def hello_world():
     rv = {}
     rv['hostname']             = socket.gethostname()
     rv['random_uuid']          = uuid_str
-    rv['timestamp']            = datetime.datetime.now()
+    rv['timestamp']            = dt.datetime.now()
     rv['set_flask_threaded']   = flask_threaded
     rv['set_loadummy_name']    = loadummy_name
 #    rv['ips']                  = _get_interface_ips()
