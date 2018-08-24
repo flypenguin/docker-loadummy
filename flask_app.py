@@ -15,21 +15,28 @@ import yaml
 import picompute
 from flask import Flask, make_response, redirect, render_template, request
 from jinja2 import escape
-from netifaces import ifaddresses, interfaces
+
 
 app = Flask(__name__)
 
+# flask defaults
 flask_threaded_default = "1"
 flask_debug_default    = "0"
 flask_port_default     = "5000"
 
-# they are all set in the first main loop
+# flask values, set in import code
 flask_threaded  = None
 flask_debug     = None
 flask_port      = None
 loadummy_next   = None
 loadummy_name   = None
 
+# application values
+uuid_str = str(uuid.uuid4())
+loadummy_next = os.environ.get("LOADUMMY_NEXT", False)
+loadummy_name = os.environ.get("LOADUMMY_NAME", 'default_name')
+
+# MIME types
 MIME_TEXT = 'text/plain'
 MIME_HTML = 'text/html'
 MIME_YAML = 'application/x-yaml'
@@ -37,27 +44,30 @@ MIME_JSON = 'application/json'
 
 
 def _get_env_vars(var_start=''):
-    render = unicode("")
+    render = ""
     for key in sorted(os.environ.keys()):
         if not key.startswith(var_start): continue
         val = os.environ.get(key)
-        addme = escape(("%s = %s"%(key,val)).decode('utf-8'))
+        addme = escape(("%s = %s"%(key, val)).decode('utf-8'))
         # the "str()" is necessary, otherwise this is (probably) some
         # convenience object which auto-escapes everything you add to it ...
-        render += unicode(addme) + "<br>"
+        render += addme + "<br>"
     return render
 
 
 def format_answer(req, obj, mimetype=None):
     def format_text(obj):
         return yaml.safe_dump(obj, default_flow_style=False)
+
     def format_html(obj):
         return \
             "<pre>" + \
             str(escape(yaml.safe_dump(obj, default_flow_style=False))) + \
             "</pre>"
+
     def format_yaml(obj):
         return yaml.dump(obj, default_flow_style=False)
+
     if not mimetype:
         accept = request.headers.get('Accept', "")
         mimetype = MIME_TEXT
@@ -80,15 +90,6 @@ def format_answer(req, obj, mimetype=None):
     return rsp
 
 
-def _get_interface_ips():
-    try:
-        # this is just fucking broken. investigate, otherwise it's disabled now.
-        return {
-            iface: ifaddresses(iface)[2][0]["addr"] for iface in interfaces()
-        }
-    except KeyError as e:
-        return {'error': str(e)}
-
 @app.route('/')
 def hello_world():
     rv = {}
@@ -97,7 +98,6 @@ def hello_world():
     rv['timestamp']            = dt.datetime.now()
     rv['set_flask_threaded']   = flask_threaded
     rv['set_loadummy_name']    = loadummy_name
-#    rv['ips']                  = _get_interface_ips()
 
     return format_answer(request, rv)
 
@@ -220,9 +220,6 @@ def distribute(num, size):
 
 
 if __name__ == '__main__':
-    uuid_str       = str(uuid.uuid4())
-    loadummy_next  = os.environ.get("LOADUMMY_NEXT", False)
-    loadummy_name  = os.environ.get("LOADUMMY_NAME", '')
     flask_threaded = os.environ.get('FLASK_THREADED', flask_threaded_default)
     flask_threaded = True if flask_threaded.lower() in ("1", "true", "on") else False
     flask_debug    = os.environ.get('FLASK_DEBUG', flask_debug_default)
