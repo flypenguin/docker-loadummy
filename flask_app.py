@@ -73,7 +73,7 @@ def format_answer(req, obj, mimetype=None):
             "pre_simple.html",
             bgcolor=bg_color,
             fgcolor=fg_color,
-            content=str(escape(yaml.safe_dump(obj, default_flow_style=False))),
+            content=str(yaml.safe_dump(obj, default_flow_style=False)),
         )
 
     def format_yaml(obj):
