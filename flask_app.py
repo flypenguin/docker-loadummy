@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import datetime as dt
 import json
 import os
