@@ -14,3 +14,11 @@ build-all:
 			. ; \
 	done ;
 .PHONY: build-all
+
+upload:
+	export COLORS="orange red blue green yellow magenta navy white black" ; \
+	docker push flypenguin/test ; \
+	for COLOR in $$COLORS ; do \
+	    docker push flypenguin/test:$$COLOR ; \
+	done ;
+.PHONY: upload-all
