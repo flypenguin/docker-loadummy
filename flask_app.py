@@ -16,6 +16,7 @@ import yaml
 
 import picompute
 from gray_conversion import get_blackwhite_from
+from name_generator import get_random_name_pair
 from flask import Flask, make_response, redirect, render_template, request
 from jinja2 import escape
 
@@ -35,7 +36,7 @@ loadummy_next = None
 loadummy_name = None
 
 # application values
-uuid_str = str(uuid.uuid4())
+identifier_instance = " ".join(get_random_name_pair()).lower()
 loadummy_next = os.environ.get("LOADUMMY_NEXT", False)
 loadummy_name = os.environ.get("LOADUMMY_NAME", "default_name")
 
@@ -107,7 +108,8 @@ def format_answer(req, obj, mimetype=None):
 def hello_world():
     rv = {}
     rv["hostname"] = socket.gethostname()
-    rv["random_uuid"] = uuid_str
+    rv["identifier_instance"] = identifier_instance
+    rv["identifier_request"] = str(uuid.uuid4())
     rv["timestamp"] = dt.datetime.now()
     rv["set_flask_threaded"] = flask_threaded
     rv["set_loadummy_name"] = loadummy_name
