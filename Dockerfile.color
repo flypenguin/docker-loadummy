@@ -1,0 +1,7 @@
+FROM flypenguin/test
+LABEL maintainer="Axel Bock <mr.axel.bock@gmail.com>"
+
+# see here: https://is.gd/MQB2jf
+
+ARG ENV_COLOR=white
+ENV COLOR=$ENV_COLOR

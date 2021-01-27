@@ -1,17 +1,13 @@
-FROM alpine
-MAINTAINER Axel Bock <mr.axel.bock@gmail.com>
+FROM python3.9-alpine
+LABEL maintainer="Axel Bock <mr.axel.bock@gmail.com>"
 
 EXPOSE 5000
 
-ENV BUILD_DEPS="python3-dev build-base linux-headers py3-pip"
+WORKDIR /usr/src/app
 
-ADD . /app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-WORKDIR /app
+COPY . .
 
-RUN    apk add --no-cache $BUILD_DEPS python3 \
-    && python3 -m ensurepip \
-    && pip3 install -r requirements.txt \
-    && apk del $BUILD_DEPS
-
-CMD python3 flask_app.py
+CMD [ "python", "./flask_app.py" ]
