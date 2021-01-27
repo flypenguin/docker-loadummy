@@ -15,7 +15,7 @@ import requests
 import yaml
 
 import picompute
-from gray_conversion import get_blackwhite_from
+from gray_conversion import get_blackwhite_from, html_colors
 from name_generator import get_random_name_pair
 from flask import Flask, make_response, redirect, render_template, request
 from jinja2 import escape
@@ -242,7 +242,7 @@ if __name__ == "__main__":
     flask_debug = True if flask_debug.lower() in ("1", "true", "on") else False
     flask_port = int(os.environ.get("FLASK_PORT", flask_port_default))
 
-    bg_color = os.environ.get("COLOR", "white")
+    bg_color = html_colors.get(os.environ.get("COLOR", "white"), "white")
     _, fg_color = get_blackwhite_from(bg_color)
 
     app.run(host="0.0.0.0", threaded=flask_threaded, port=flask_port, debug=flask_debug)

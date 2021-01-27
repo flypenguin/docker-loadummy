@@ -148,7 +148,7 @@ html_colors = {
 
 
 def get_blackwhite_from(color):
-    tmp = html_colors.get(color, "000000")
+    tmp = html_colors.get(color, "ffffff")
 
     # https://stackoverflow.com/a/17619494
     gray_value = (
@@ -167,6 +167,7 @@ def get_blackwhite_from(color):
 
 if __name__ == "__main__":
     import os
+
     gray_value, fg_color = get_blackwhite_from(os.environ.get("COLOR", "white"))
 
     print(gray_value)
