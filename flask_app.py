@@ -15,6 +15,7 @@ import requests
 import yaml
 
 import picompute
+from gray_conversion import get_blackwhite_from
 from flask import Flask, make_response, redirect, render_template, request
 from jinja2 import escape
 
@@ -44,6 +45,10 @@ MIME_HTML = "text/html"
 MIME_YAML = "application/x-yaml"
 MIME_JSON = "application/json"
 
+# colors
+fg_color = "black"
+bg_color = "white"
+
 
 def _get_env_vars(var_start=""):
     render = ""
@@ -63,10 +68,11 @@ def format_answer(req, obj, mimetype=None):
         return yaml.safe_dump(obj, default_flow_style=False)
 
     def format_html(obj):
-        return (
-            "<pre>"
-            + str(escape(yaml.safe_dump(obj, default_flow_style=False)))
-            + "</pre>"
+        return render_template(
+            "pre_simple.html",
+            bgcolor=bg_color,
+            fgcolor=fg_color,
+            content=str(escape(yaml.safe_dump(obj, default_flow_style=False))),
         )
 
     def format_yaml(obj):
@@ -74,9 +80,9 @@ def format_answer(req, obj, mimetype=None):
 
     if not mimetype:
         accept = request.headers.get("Accept", "")
-        mimetype = MIME_TEXT
+        mimetype = MIME_HTML
         if accept == "*/*":
-            mimetype = MIME_TEXT
+            mimetype = MIME_HTML
         elif accept.find("yaml") != -1:
             mimetype = MIME_YAML
         elif accept.find("json") != -1:
@@ -105,6 +111,7 @@ def hello_world():
     rv["timestamp"] = dt.datetime.now()
     rv["set_flask_threaded"] = flask_threaded
     rv["set_loadummy_name"] = loadummy_name
+    rv["color"] = bg_color
 
     return format_answer(request, rv)
 
@@ -232,5 +239,8 @@ if __name__ == "__main__":
     flask_debug = os.environ.get("FLASK_DEBUG", flask_debug_default)
     flask_debug = True if flask_debug.lower() in ("1", "true", "on") else False
     flask_port = int(os.environ.get("FLASK_PORT", flask_port_default))
+
+    bg_color = os.environ.get("COLOR", "white")
+    _, fg_color = get_blackwhite_from(bg_color)
 
     app.run(host="0.0.0.0", threaded=flask_threaded, port=flask_port, debug=flask_debug)
