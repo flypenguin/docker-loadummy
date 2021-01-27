@@ -146,28 +146,31 @@ html_colors = {
 }
 
 
-def get_blackwhite_from(color):
-    tmp = html_colors.get(color, "ffffff")
+def get_html_color(color):
+    return html_colors.get(color, None)
 
+
+# Input: a hex string like this: "abcdef"
+def get_gray_value(hex_str):
     # https://stackoverflow.com/a/17619494
     gray_value = (
-        int(tmp[0:2], 16) / 255.0 * 0.2126
-        + int(tmp[2:4], 16) / 255.0 * 0.7152
-        + int(tmp[4:], 16) / 255.0 * 0.0722
+        int(hex_str[0:2], 16) / 255.0 * 0.2126
+        + int(hex_str[2:4], 16) / 255.0 * 0.7152
+        + int(hex_str[4:], 16) / 255.0 * 0.0722
     )
     if gray_value <= 0.0031308:
         gray_value *= 12.92
     else:
         gray_value = 1.055 * gray_value ** (1 / 2.4) - 0.055
 
-    bw = "black" if gray_value >= 0.5 else "white"
-    return gray_value, bw
+    return gray_value
 
 
 if __name__ == "__main__":
     import os
 
-    gray_value, fg_color = get_blackwhite_from(os.environ.get("COLOR", "white"))
+    color_hex_str = get_html_color(os.environ.get("COLOR", "white")) or "ffffff"
+    print("Using hex value: ", color_hex_str)
 
-    print(gray_value)
-    print(fg_color)
+    gray_value = get_gray_value(color_hex_str)
+    print("Grayscale value: ", gray_value)
