@@ -1,5 +1,5 @@
 FROM flypenguin/test
-LABEL maintainer="Axel Bock <mr.axel.bock@gmail.com>"
+LABEL maintainer="Axel Bock <ab@a3b3.de>"
 
 # see here: https://is.gd/MQB2jf
 

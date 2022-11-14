@@ -1,7 +1,7 @@
-FROM python:3.9-alpine
-LABEL maintainer="Axel Bock <mr.axel.bock@gmail.com>"
+FROM python:3.10-alpine
+LABEL maintainer="Axel Bock <ab@a3b3.de>"
 
-EXPOSE 5000
+EXPOSE 80
 
 WORKDIR /usr/src/app
 

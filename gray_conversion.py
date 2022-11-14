@@ -146,8 +146,11 @@ html_colors = {
 }
 
 
-def get_html_color(color):
-    return html_colors.get(color, None)
+def get_color_hex_value(color):
+    print(f"color = {color}")
+    rv = html_colors.get(color, None)
+    print(f"rv = {rv}")
+    return rv
 
 
 # Input: a hex string like this: "abcdef"
@@ -169,7 +172,7 @@ def get_gray_value(hex_str):
 if __name__ == "__main__":
     import os
 
-    color_hex_str = get_html_color(os.environ.get("COLOR", "white")) or "ffffff"
+    color_hex_str = get_color_hex_value(os.environ.get("COLOR", "white")) or "ffffff"
     print("Using hex value: ", color_hex_str)
 
     gray_value = get_gray_value(color_hex_str)

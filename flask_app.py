@@ -4,6 +4,7 @@ import datetime as dt
 import json
 import os
 import random
+import re
 import socket
 import subprocess
 import sys
@@ -18,7 +19,7 @@ import picompute
 from gray_conversion import *
 from name_generator import get_random_name_pair
 from flask import Flask, make_response, redirect, render_template, request
-from jinja2 import escape
+from markupsafe import escape
 
 
 app = Flask(__name__)
@@ -36,7 +37,7 @@ loadummy_next = None
 loadummy_name = None
 
 # application values
-identifier_instance = " ".join(get_random_name_pair()).lower()
+instance_identifier = " ".join(get_random_name_pair()).lower()
 loadummy_next = os.environ.get("LOADUMMY_NEXT", False)
 loadummy_name = os.environ.get("LOADUMMY_NAME", "default_name")
 
@@ -108,9 +109,9 @@ def format_answer(req, obj, mimetype=None):
 def hello_world():
     rv = {}
     rv["hostname"] = socket.gethostname()
-    rv["identifier_instance"] = identifier_instance
-    rv["identifier_request"] = str(uuid.uuid4())
-    rv["timestamp"] = dt.datetime.now()
+    rv["instance_identifier"] = instance_identifier
+    rv["request_identifier"] = str(uuid.uuid4())
+    rv["request_timestamp"] = dt.datetime.now()
     rv["set_flask_threaded"] = flask_threaded
     rv["set_loadummy_name"] = loadummy_name
     rv["color_bg"] = bg_color
@@ -243,11 +244,37 @@ if __name__ == "__main__":
     flask_debug = True if flask_debug.lower() in ("1", "true", "on") else False
     flask_port = int(os.environ.get("FLASK_PORT", flask_port_default))
 
-    bg_color = os.environ.get("COLOR", "white")
-    bg_color_hex = get_html_color(bg_color) or "ffffff"
-    if bg_color_hex == "ffffff":
-        bg_color = "white"
-    gray_value = get_gray_value(bg_color_hex)
-    fg_color = "black" if gray_value >= 0.5 else "white"
+    startup_time = float(os.environ.get("STARTUP_TIME", "0"))
 
+    random.seed()
+
+    bg_color = os.environ.get("COLOR", "dddddd")
+    if bg_color == "random":
+        bg_color, bg_color_hex = random.choice(list(html_colors.items()))
+    elif re.match("[0-9a-f]{6}", bg_color):
+        bg_color_hex = bg_color
+    else:
+        bg_color_hex = get_color_hex_value(bg_color)
+        if bg_color_hex is None:
+            print(f"\nWARNING: Unknown color: '{bg_color}'\n")
+            bg_color = "white"
+            bg_color_hex = "ffffff"
+    gray_value = get_gray_value(bg_color_hex)
+    fg_color = "333333" if gray_value >= 0.5 else "eeeeee"
+
+    print(f"=====================STARTUP==========================")
+    print(f"using bg_color:         {bg_color}")
+    print(f"using fg_color:         {fg_color}")
+    print(f"using startup_time:     {startup_time}")
+    print(f"using flask_port:       {flask_port}")
+    print(f"using flask_threaded:   {flask_threaded}")
+    print(f"using flask_debug:      {flask_debug}")
+    print(f"======================================================")
+    print()
+
+    print(f"Starting up for {startup_time} seconds ... ", end="", flush=True)
+    print()
+
+    time.sleep(startup_time)
+    print("done.")
     app.run(host="0.0.0.0", threaded=flask_threaded, port=flask_port, debug=flask_debug)
