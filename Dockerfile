@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM python:3.11-alpine
 LABEL maintainer="Axel Bock <ab@a3b3.de>"
 
 EXPOSE 80
