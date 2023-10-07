@@ -7,9 +7,10 @@ build-one:
 .PHONY: build-one
 
 build-all: build-one
+	# https://is.gd/jxU0eq
 	for COLOR in $(COLORS) ; do \
-		docker build \
-		    --build-arg ENV_RUN_COLOR=$$COLOR \
+		docker buildx build --platform linux/amd64 \
+		    --build-arg TAG_COLOR=$$COLOR \
 			-t $(CONTAINER_NAME):$$COLOR \
 			-f Dockerfile.color \
 			. ; \

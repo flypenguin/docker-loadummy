@@ -3,5 +3,5 @@ LABEL maintainer="Axel Bock <ab@a3b3.de>"
 
 # see here: https://is.gd/MQB2jf
 
-ARG ENV_COLOR=white
-ENV COLOR=$ENV_COLOR
+ARG TAG_COLOR=white
+ENV COLOR=$TAG_COLOR
