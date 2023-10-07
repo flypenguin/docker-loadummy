@@ -13,12 +13,13 @@ A simple little Flask app which computes pi to the nth number to simulate CPU lo
 Displayed are the default values
 
 ```
-COLOR=white         # a color name from ->gray_conversion.py or "random"
+COLOR=white         # a color name (see below), a color hex code, or "`random`"
 STARTUP_TIME=0.0    # sleep that many seconds before flask starts
 FLASK_PORT=80       # port flask listens on ()
 FLASK_DEBUG=0       # whether flask is put in debug mode
 FLASK_THREADED=1    # whether flask is being run multi-threaded
-LOADUMMY_NEXT=      # optional. documentation for this - see below.
+LOADUMMY_NAME=      # optional. set a name, useful for clusters - see below
+LOADUMMY_NEXT=      # optional. documentation for this - see below
 ```
 
 ## Data encoding
@@ -29,35 +30,21 @@ if it finds the string `json` it returns JSON data (`Content-type: application/j
 
 ## Endpoints
 
-### `/health`
+|  endpoint                 |  description                                                     |
+| ------------------------- | ---------------------------------------------------------------- |
+| `/health`                 |   Returns "OK" with a HTTP status code of 200.                   |
+| `/pi/<digits>`            | Computes the number pi with the number of digits given.          |
+| `/env`                    | Displays all environment variables in the docker container.      |
+| `/env/<VAR_START_STRING>` | Displays all environment variables starting with `VAR_START_STR` |
+| `/distrib/<num>/<avg>`    | see below                                                        |
 
-Returns "OK" with a HTTP status code of 200.
+### Using the `/distrib` endpoint
 
-### `/pi/<digits>`
+Originally used to simulate load. Never really tried, but should work.
 
-Computes the number pi with the number of digits given. So ...
+**To use this endpoint variable `LOADUMMY_DISTRIB` must be set:** `LOADUMMY_DISTRIB=https?://<next_host>[:<nextport>]`
 
-    localhost:5000/pi/5000
-
-... will compute pi until 5000 digits. On a MacBook Air 2012 100.000 digits will take about 20 seconds.
-
-### `/env`
-
-Displays all environment variables in the docker container.
-
-### `/env/<VAR_START_STRING>`
-
-Displays all environment variables starting with `VAR_START_STR`
-
-    localhost:5000/env/PATH
-
-### `/distrib/<num>/<avg>`
-
-To simulate a controller / worker type of structure you can use the `/distrib/<a>/<b>` endpoint. To use this endpoint variable `LOADUMMY_DISTRIB` must be set.
-
-    LOADUMMY_DISTRIB=https?://<next_host>[:<nextport>]
-
-If you call `http://host:port/distrib/5/250` now, what happens then is ...
+Now, if you call `http://host:port/distrib/5/250` now, what happens then is ...
 
 - it will create NUM requests for calculation of pi with
 - (on average) DIGITS digits.
@@ -71,3 +58,43 @@ Or better: if you call it with `/5/250`, it might query those urls:
 - `http://next_host:nextport/pi/276` (5th request)
 
 ... where the numbers are made up randomly around the 250 digits marker (plus minus 10%).
+
+## Valid color names
+
+|   color         |   color              |   color           |   color       |   color     |
+| --------------- | -------------------- | ----------------- | ------------- | ----------- |
+|  aliceblue      | darkslategray        | lightsalmon       | paleturquoise | yellow      |
+|  antiquewhite   | darkturquoise        | lightsalmon       | palevioletred | yellowgreen |
+|  aqua           | darkviolet           | lightseagreen     | papayawhip    |             |
+|  aquamarine     | deeppink             | lightskyblue      | peachpuff     |             |
+|  azure          | deepskyblue          | lightslategray    | peru          |             |
+|  beige          | dimgray              | lightsteelblue    | pink          |             |
+|  bisque         | dodgerblue           | lightyellow       | plum          |             |
+|  black          | firebrick            | lime              | powderblue    |             |
+|  blanchedalmond | floralwhite          | limegreen         | purple        |             |
+|  blue           | forestgreen          | linen             | rebeccapurple |             |
+|  blueviolet     | fuchsia              | magenta           | red           |             |
+|  brown          | gainsboro            | maroon            | rosybrown     |             |
+|  burlywood      | ghostwhite           | mediumaquamarine  | royalblue     |             |
+|  cadetblue      | gold                 | mediumblue        | saddlebrown   |             |
+|  chartreuse     | goldenrod            | mediumorchid      | salmon        |             |
+|  chocolate      | gray                 | mediumpurple      | sandybrown    |             |
+|  coral          | green                | mediumseagreen    | seagreen      |             |
+|  cornflowerblue | greenyellow          | mediumslateblue   | seashell      |             |
+|  cornsilk       | honeydew             | mediumspringgreen | sienna        |             |
+|  crimson        | hotpink              | mediumturquoise   | silver        |             |
+|  cyan           | indianred            | mediumvioletred   | skyblue       |             |
+|  darkblue       | indigo               | midnightblue      | slateblue     |             |
+|  darkcyan       | ivory                | mintcream         | slategray     |             |
+|  darkgoldenrod  | khaki                | mistyrose         | snow          |             |
+|  darkgray       | lavender             | moccasin          | springgreen   |             |
+|  darkgreen      | lavenderblush        | navajowhite       | steelblue     |             |
+|  darkkhaki      | lawngreen            | navy              | tan           |             |
+|  darkmagenta    | lemonchiffon         | oldlace           | teal          |             |
+|  darkolivegreen | lightblue            | olive             | thistle       |             |
+|  darkorange     | lightcoral           | olivedrab         | tomato        |             |
+|  darkorchid     | lightcyan            | orange            | turquoise     |             |
+|  darkred        | lightgoldenrodyellow | orangered         | violet        |             |
+|  darksalmon     | lightgray            | orchid            | wheat         |             |
+|  darkseagreen   | lightgreen           | palegoldenrod     | white         |             |
+|  darkslateblue  | lightpink            | palegreen         | whitesmoke    |             |
