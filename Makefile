@@ -3,7 +3,7 @@ COLORS = orange red blue green yellow magenta navy white black
 RUN_COLOR = white
 
 build-one:
-	docker build -t $(CONTAINER_NAME) -f Dockerfile .
+	docker buildx build --platform linux/amd64 -t $(CONTAINER_NAME) -f Dockerfile .
 .PHONY: build-one
 
 build-all: build-one
@@ -17,13 +17,15 @@ build-all: build-one
 	done ;
 .PHONY: build-all
 
+build: build-all
+.PHONY: build
+
 push: build
 	docker push $(CONTAINER_NAME)
+	echo $(COLORS) | tr " " "\n" | parallel docker push $(CONTAINER_NAME):{}
 .PHONY: push
 
-push-all: build-all
-	docker push $(CONTAINER_NAME)
-	echo $(COLORS) | tr " " "\n" | parallel docker push $(CONTAINER_NAME):{}
+push-all: push
 .PHONY: push-all
 
 upload: push
@@ -31,9 +33,6 @@ upload: push
 
 upload-all: push
 .PHONY: upload-all
-
-build: build-all
-.PHONY: build
 
 run: build-one
 	docker run --rm -e FLASK_PORT=8000 -e COLOR=$(RUN_COLOR) -p 8000:8000 $(CONTAINER_NAME)
